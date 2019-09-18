@@ -89,10 +89,12 @@ class faceAgeEvaluator(KerasNetworkEvaluator):
 
         if extract:
             datafile = get_data_dict_filename(data_pathdict, 'datafile')
-            tar_command = "tar -xzf {0}".format(datafile)
+            print("####################datafile######################",datafile)
+            fpath = os.path.dirname(os.path.abspath(datafile))
+            tar_command = "tar -xzf {0} -C {1}".format(datafile, fpath)
             os.system(tar_command)
             
-        fpath = os.path.dirname(os.path.abspath(datafile))
+        #fpath = os.path.dirname(os.path.abspath(datafile))
         fpath_flist = os.listdir(fpath)
         for i in fpath_flist:
           isDirectory = os.path.isdir(fpath + '/' +i)
