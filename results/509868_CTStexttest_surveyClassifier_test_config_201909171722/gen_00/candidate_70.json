@@ -1,0 +1,391 @@
+{
+    "id": "70",
+    "identity": {
+        "error": null,
+        "id": "70"
+    },
+    "interpretation": {
+        "global_hyperparameters": {
+            "id": "70",
+            "learning_rate": 0.0017163708229107116
+        },
+        "model": {
+            "backend": "tensorflow",
+            "class_name": "Model",
+            "config": {
+                "input_layers": [
+                    [
+                        "input_task_00_term_00",
+                        0,
+                        0
+                    ]
+                ],
+                "layers": [
+                    {
+                        "class_name": "InputLayer",
+                        "config": {
+                            "batch_input_shape": [
+                                null,
+                                100,
+                                119
+                            ],
+                            "dtype": "float32",
+                            "name": "input_task_00_term_00",
+                            "sparse": false
+                        },
+                        "inbound_nodes": [],
+                        "name": "input_task_00_term_00"
+                    },
+                    {
+                        "class_name": "Model",
+                        "config": {
+                            "input_layers": [
+                                [
+                                    "input_1",
+                                    0,
+                                    0
+                                ]
+                            ],
+                            "layers": [
+                                {
+                                    "class_name": "InputLayer",
+                                    "config": {
+                                        "batch_input_shape": [
+                                            null,
+                                            100,
+                                            119
+                                        ],
+                                        "dtype": "float32",
+                                        "name": "input_1",
+                                        "sparse": false
+                                    },
+                                    "inbound_nodes": [],
+                                    "name": "input_1"
+                                },
+                                {
+                                    "class_name": "Conv1D",
+                                    "config": {
+                                        "activation": "linear",
+                                        "activity_regularizer": null,
+                                        "bias_constraint": null,
+                                        "bias_initializer": {
+                                            "class_name": "Zeros",
+                                            "config": {}
+                                        },
+                                        "bias_regularizer": null,
+                                        "data_format": "channels_last",
+                                        "dilation_rate": [
+                                            1
+                                        ],
+                                        "filters": 119,
+                                        "kernel_constraint": null,
+                                        "kernel_initializer": {
+                                            "class_name": "VarianceScaling",
+                                            "config": {
+                                                "distribution": "uniform",
+                                                "mode": "fan_in",
+                                                "scale": 2.0,
+                                                "seed": null
+                                            }
+                                        },
+                                        "kernel_regularizer": {
+                                            "class_name": "L1L2",
+                                            "config": {
+                                                "l1": 0.0,
+                                                "l2": 0.00031541494536213577
+                                            }
+                                        },
+                                        "kernel_size": [
+                                            1
+                                        ],
+                                        "name": "Conv1D",
+                                        "padding": "same",
+                                        "strides": [
+                                            1
+                                        ],
+                                        "trainable": true,
+                                        "use_bias": true
+                                    },
+                                    "inbound_nodes": [
+                                        [
+                                            [
+                                                "input_1",
+                                                0,
+                                                0,
+                                                {}
+                                            ]
+                                        ]
+                                    ],
+                                    "name": "Conv1D"
+                                },
+                                {
+                                    "class_name": "MaxPooling1D",
+                                    "config": {
+                                        "data_format": "channels_last",
+                                        "name": "MaxPooling1D",
+                                        "padding": "valid",
+                                        "pool_size": [
+                                            2
+                                        ],
+                                        "strides": [
+                                            2
+                                        ],
+                                        "trainable": true
+                                    },
+                                    "inbound_nodes": [
+                                        [
+                                            [
+                                                "Conv1D",
+                                                0,
+                                                0,
+                                                {}
+                                            ]
+                                        ]
+                                    ],
+                                    "name": "MaxPooling1D"
+                                }
+                            ],
+                            "name": "model_1_module_50_1_3",
+                            "output_layers": [
+                                [
+                                    "MaxPooling1D",
+                                    0,
+                                    0
+                                ]
+                            ]
+                        },
+                        "inbound_nodes": [
+                            [
+                                [
+                                    "input_task_00_term_00",
+                                    0,
+                                    0,
+                                    {}
+                                ]
+                            ]
+                        ],
+                        "name": "model_1_module_50_1_3"
+                    },
+                    {
+                        "class_name": "MaxPooling1D",
+                        "config": {
+                            "data_format": "channels_last",
+                            "name": "final_maxpool_task_00_node_02",
+                            "padding": "valid",
+                            "pool_size": [
+                                8
+                            ],
+                            "strides": [
+                                8
+                            ],
+                            "trainable": true
+                        },
+                        "inbound_nodes": [
+                            [
+                                [
+                                    "model_1_module_50_1_3",
+                                    1,
+                                    0,
+                                    {}
+                                ]
+                            ]
+                        ],
+                        "name": "final_maxpool_task_00_node_02"
+                    },
+                    {
+                        "class_name": "Flatten",
+                        "config": {
+                            "data_format": "channels_last",
+                            "name": "flattendec_task_00_term_00",
+                            "trainable": true
+                        },
+                        "inbound_nodes": [
+                            [
+                                [
+                                    "final_maxpool_task_00_node_02",
+                                    0,
+                                    0,
+                                    {}
+                                ]
+                            ]
+                        ],
+                        "name": "flattendec_task_00_term_00"
+                    },
+                    {
+                        "class_name": "Dense",
+                        "config": {
+                            "activation": "softmax",
+                            "activity_regularizer": null,
+                            "bias_constraint": null,
+                            "bias_initializer": {
+                                "class_name": "Zeros",
+                                "config": {}
+                            },
+                            "bias_regularizer": null,
+                            "kernel_constraint": null,
+                            "kernel_initializer": {
+                                "class_name": "VarianceScaling",
+                                "config": {
+                                    "distribution": "uniform",
+                                    "mode": "fan_avg",
+                                    "scale": 1.0,
+                                    "seed": null
+                                }
+                            },
+                            "kernel_regularizer": null,
+                            "name": "densedec_task_00_term_00",
+                            "trainable": true,
+                            "units": 339,
+                            "use_bias": true
+                        },
+                        "inbound_nodes": [
+                            [
+                                [
+                                    "flattendec_task_00_term_00",
+                                    0,
+                                    0,
+                                    {}
+                                ]
+                            ]
+                        ],
+                        "name": "densedec_task_00_term_00"
+                    }
+                ],
+                "name": "model_1",
+                "output_layers": [
+                    [
+                        "densedec_task_00_term_00",
+                        0,
+                        0
+                    ]
+                ]
+            },
+            "keras_version": "2.2.4"
+        }
+    },
+    "metrics": {
+        "alt_objective": null,
+        "avg_gpu_batch_time": [],
+        "execution": {
+            "client_elapsed_time": 10.62281584739685,
+            "eval_error": null,
+            "queue_wait_time": 302.827100276947,
+            "return_timestamp": 1568741276.2563238
+        },
+        "fitness": 0.10821643222805234,
+        "loss_history": {
+            "activation_1_acc": [
+                0.18454613648941887,
+                0.19554888715473345,
+                0.19554888718454325,
+                0.19554888715473345,
+                0.19554888719199567
+            ],
+            "activation_1_loss": [
+                2.4763436411642736,
+                2.480176200804695,
+                2.4702261823748137,
+                2.406761831627932,
+                2.373126004629953
+            ],
+            "activation_2_acc": [
+                0.020005001227955246,
+                0.01750437608657106,
+                0.02525631407851963,
+                0.03100775193053205,
+                0.026756689172293072
+            ],
+            "activation_2_loss": [
+                5.392991223613093,
+                5.39362707099905,
+                5.393626369873146,
+                5.393623516243021,
+                5.393625518386738
+            ],
+            "activation_3_acc": [
+                0.10552638156558908,
+                0.12678169534933154,
+                0.1267816953791413,
+                0.12703175791712754,
+                0.12653163288586972
+            ],
+            "activation_3_loss": [
+                4.6597667024206535,
+                4.568644965759185,
+                4.573467410364936,
+                4.579668786472665,
+                4.5733561360797275
+            ],
+            "loss": [
+                12.58425028296106,
+                12.4749246586797,
+                12.452787949461197,
+                12.39107109421818,
+                12.35147439804516
+            ],
+            "val_activation_1_acc": [
+                0.18837675192432557,
+                0.18837675192432557,
+                0.18837675192432557,
+                0.18837675192432557,
+                0.18837675192432557
+            ],
+            "val_activation_1_loss": [
+                2.451804707666676,
+                2.4839897757780576,
+                2.4571350308840643,
+                2.417922387858909,
+                2.4098375340501867
+            ],
+            "val_activation_2_acc": [
+                0.014028055929319414,
+                0.006012023956643675,
+                0.014028055929319414,
+                0.016032063945351477,
+                0.014028056020771932
+            ],
+            "val_activation_2_loss": [
+                5.393612548201261,
+                5.393628120422363,
+                5.393624110785658,
+                5.393625785927018,
+                5.393626457703615
+            ],
+            "val_activation_3_acc": [
+                0.12224448873905953,
+                0.12224448873905953,
+                0.12224448873905953,
+                0.12224448873905953,
+                0.12224448873905953
+            ],
+            "val_activation_3_loss": [
+                4.609398137591406,
+                4.567101657271146,
+                4.5828880451485245,
+                4.576408562058198,
+                4.577931704167613
+            ],
+            "val_loss": [
+                12.495653744928822,
+                12.466981050724495,
+                12.44412830597413,
+                12.399853822941292,
+                12.39134805140371
+            ]
+        },
+        "novelty": {
+            "behavior": null
+        },
+        "num_epochs_trained": 5,
+        "regression": {
+            "features": null
+        },
+        "task_fitness": [
+            0.10821643222805234
+        ],
+        "total_num_epochs_trained": 5,
+        "train_seed": 610509,
+        "training_time": 6.896455764770508,
+        "weights_l2norm": null
+    }
+}

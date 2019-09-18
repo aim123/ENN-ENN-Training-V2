@@ -1,0 +1,283 @@
+{
+    "blueprint_config": {
+        "blueprint_num_eval": 1,
+        "carry_over": 0,
+        "elitism": 0.0,
+        "pop_size": 2,
+        "prob_addconn": 1.0,
+        "prob_addnode": 1.0,
+        "species_size": 1
+    },
+    "builder_config": {
+        "decoder": "keras_classifier",
+        "encoder": "keras_zero_padding_image",
+        "evaluation_hyperparameters_spec": {
+            "type": {
+                "learning_rate": {
+                    "lowerBound": 0.0001,
+                    "scale": "log",
+                    "type": "Double",
+                    "upperBound": 0.001
+                }
+            }
+        },
+        "input_shapes": [
+            105,
+            105,
+            1
+        ],
+        "layer_mismatches": [
+            [
+                "'Conv2D'",
+                "'Conv2D'"
+            ],
+            [
+                "'Dropout'",
+                "'Dropout'"
+            ],
+            [
+                "'Dropout'",
+                "'Conv2D'"
+            ]
+        ],
+        "layer_parameters_spec": {
+            "type": {
+                "Conv2D": {
+                    "type": {
+                        "activation": {
+                            "choice": [
+                                "relu",
+                                "linear",
+                                "elu",
+                                "selu"
+                            ],
+                            "type": "String"
+                        },
+                        "filters": {
+                            "lowerBound": 16,
+                            "scale": "log",
+                            "type": "Integer",
+                            "upperBound": 96
+                        },
+                        "kernel_initializer": {
+                            "choice": [
+                                "glorot_normal",
+                                "he_normal",
+                                "glorot_uniform",
+                                "he_uniform"
+                            ],
+                            "type": "String"
+                        },
+                        "kernel_regularizer": {
+                            "type": {
+                                "l": {
+                                    "lowerBound": 1e-09,
+                                    "scale": "log",
+                                    "type": "Double",
+                                    "upperBound": 0.001
+                                },
+                                "regularizer": {
+                                    "choice": [
+                                        "l2"
+                                    ],
+                                    "type": "String"
+                                }
+                            }
+                        },
+                        "kernel_size": {
+                            "choice": [
+                                1,
+                                3
+                            ],
+                            "type": "Integer"
+                        },
+                        "padding": {
+                            "choice": [
+                                "same"
+                            ],
+                            "type": "String"
+                        }
+                    }
+                },
+                "Dropout": {
+                    "type": {
+                        "rate": {
+                            "lowerBound": 0.0,
+                            "scale": "linear",
+                            "type": "Double",
+                            "upperBound": 0.7
+                        }
+                    }
+                }
+            }
+        },
+        "module_scaling_policy": "softmax_module_scaling",
+        "num_tasks": 2,
+        "output_shapes": [
+            [
+                48
+            ],
+            [
+                28
+            ]
+        ]
+    },
+    "domain_config": {
+        "batch_size": 1,
+        "checkpoint_dir": ".",
+        "checkpoint_interval": null,
+        "custom_train_seed": null,
+        "data_basedir": "http://s3.us-west-2.amazonaws.com/ml-enn/deepbilevel_datafiles/omniglot",
+        "dummy_load": false,
+        "dummy_run": "real",
+        "evaluator_class_name": "OmniglotEvaluator",
+        "extra_config": null,
+        "filename_dict": {
+            "omniglot2.tar.gz": "omniglot2.tar.gz"
+        },
+        "gpu_mem_frac": null,
+        "info": {
+            "alphabet_sizes": [
+                48,
+                28
+            ],
+            "augment": false,
+            "crop_amount": 16,
+            "image_size": 105,
+            "lr_decay": 10,
+            "lr_decay_amount": 0.1,
+            "lr_floor": 0.0,
+            "lr_scale": 1.0,
+            "num_tasks": 2,
+            "task_names": [
+                "Gujarati",
+                "Sylheti"
+            ],
+            "unzip_curr_dir": false,
+            "use_test_data": true
+        },
+        "load_checkpoint": false,
+        "local_data_cachedir": "~/enn_datacache",
+        "num_epochs": 2,
+        "num_iterations_per_epoch": 2,
+        "persist_weights": false,
+        "send_data": true,
+        "shuffle_data": false,
+        "stop_cond": {
+            "min_improve_hist_length": 999,
+            "min_improvement": 0,
+            "timeout_seconds": 999999
+        },
+        "subsample": false,
+        "subsample_amount": null,
+        "test_dataset": "val",
+        "test_every_epoch": false,
+        "test_subsample": false,
+        "test_subsample_amount": null,
+        "test_val_only": true,
+        "timestamp_chkpt_dir": false,
+        "train_abs_num_epochs": false,
+        "train_dataset": "train",
+        "upload_best_model": false,
+        "upload_trained_model": false,
+        "verbose": true
+    },
+    "experiment_config": {
+        "age_layering": false,
+        "blueprint_config": null,
+        "builder_config": null,
+        "client_file": "/home/ubuntu/enn-workspace/enn-release/experimenthost/config/../../framework/client_script/client.py",
+        "completion_service": {
+            "bid": "30%",
+            "cleanup": false,
+            "cloud": null,
+            "debug": false,
+            "local": true,
+            "num_workers": 1,
+            "queue": null,
+            "resources_needed": {
+                "cpus": 1,
+                "gpuMem": "5g",
+                "gpus": 0,
+                "hdd": "10g",
+                "ram": "4g"
+            },
+            "sleep_time": 60,
+            "ssh_keypair": "enn-us-east",
+            "studio_ml_config": {
+                "database": {
+                    "authentication": "none",
+                    "bucket": "509868-ctstexttest-enn-studioml-database",
+                    "endpoint": "http://s3.us-east-1.amazonaws.com/",
+                    "type": "s3"
+                },
+                "queue": "local",
+                "saveMetricsFrequency": "1m",
+                "saveWorkspaceFrequency": "1m",
+                "storage": {
+                    "bucket": "509868-ctstexttest-enn-studioml-storage",
+                    "endpoint": "http://s3.us-east-1.amazonaws.com/",
+                    "type": "s3"
+                },
+                "verbose": "error"
+            },
+            "timeout": 300
+        },
+        "domain": "omniglot",
+        "domain_config": null,
+        "domain_config_class_name": "OmniglotDomainConfig",
+        "domain_config_in": null,
+        "enn_service_host": "test.enn.evolution.ml",
+        "enn_service_port": 80,
+        "evaluate_all": true,
+        "evolution_algorithm_config_in": null,
+        "experiment_basedir": "../results/",
+        "experiment_host_evaluator": null,
+        "extra_packages": null,
+        "module_config": null,
+        "network_builder": null,
+        "network_builder_config_in": null,
+        "network_visualization": [
+            "SeeNN",
+            "SeeNNBlueprint",
+            "SeeNNModuleCatalog"
+        ],
+        "no_results_quit": true,
+        "novelty_k": 7,
+        "novelty_max_size": 1000,
+        "novelty_p": 0.15,
+        "novelty_search": false,
+        "num_generations": 2,
+        "online_regression": false,
+        "online_regression_max_target_epoch": 50,
+        "online_regression_sample_threshold": 20,
+        "online_regression_target_metric": "fitness",
+        "reevaluate_checkpoint_dir": null,
+        "reevaluate_chromo": null,
+        "reevaluate_num": 50,
+        "timeout_settings": [
+            [
+                0.8,
+                1500
+            ],
+            [
+                0.9,
+                1000
+            ],
+            [
+                0.95,
+                500
+            ]
+        ],
+        "verbose": false,
+        "visualize": true
+    },
+    "module_config": {
+        "compatibility_threshold": 1.0,
+        "elitism": 0.0,
+        "pop_size": 2,
+        "prob_addconn": 0.5,
+        "prob_addnode": 1.0,
+        "species_size": 2
+    }
+}

@@ -1,0 +1,326 @@
+{
+    # The HOCON format is a JSON superset that allows comments
+    # and environment variable substitution ... among other things.
+
+    #
+    # Small configuration for running ENN session_server and workers locally  
+    # with minimal external compute and storage dependencies. 
+    #
+    # This config was put together to explain the constraints of the domain and
+    # to help others be sure that their setup is working without incurring
+    # huge time or money costs.
+    #
+
+    "experiment_config": {
+        
+        ###
+        ### Configuration for running ENN session_server and workers ###
+        ###
+        
+        # Name of domain, allows us to determine how data should be loaded
+        "domain": "textclassifier",
+        
+        # Number of generations to run evolution for
+        "num_generations": 2,
+        
+        # A list of tuples of different fractions of results received and
+        # corresponding timeout in seconds.
+        "timeout_settings": [[0.8, 3000], [0.9, 2000], [0.95, 1000]],
+        
+        # Whether to visualize the best performing network every generation
+        # and graph some attributes about the run.
+        "visualize": true,
+        
+        # Specifies the domain-configuration class's name.
+        # File will be found by snake-case of this value.
+        "domain_config_class_name": "TextClassifierDomainConfig",
+        
+        "completion_service": {
+        
+            # Number of workers that StudioML will spin up
+            "num_workers": 1,
+        
+            # List of requirements for worker machines, including number of CPUs,
+            # GPUs needed, RAM, HDD space.
+            "resources_needed": {
+                "cpus": 1,
+                "ram": "4g",
+                "hdd": "10g",
+                "gpus": 0,
+                "gpuMem": "0g"
+            },
+        
+            # Timeout for completion service
+            "timeout": 3000,
+
+            # Cloud settings for completion service
+            "cloud": null,
+        
+            # Whether the completion service is running locally or not
+            "local": true,
+        
+            # Whether to turn on debug mode or not
+            "debug": false,
+        
+            "studio_ml_config": {
+
+                # AWS: May 2019, S3 Bucket Name Requirements listed
+                # - bucket name can be between 3 and 63 characters long
+                # - contain only lower-case characters, numbers, periods, and dashes
+                # - Link: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html
+                "database": {
+                    "type": "s3",
+                    "endpoint": ${STUDIO_DATABASE_ENDPOINT},
+                    "bucket": ${ENN_USER}-enn-studioml-database,
+                    "authentication": "none"
+                },  
+                "storage": {
+                    "type": "s3",
+                    "endpoint": ${STUDIO_STORAGE_ENDPOINT},
+                    "bucket": ${ENN_USER}-enn-studioml-storage
+                },  
+                "queue": "local",
+                "saveMetricsFrequency": "1m",
+                "saveWorkspaceFrequency": "1m",
+                "verbose": "error"
+            }  
+        }
+    },
+        
+        
+    "domain_config": {
+        
+        # URL to domain data files which contains
+        # files "labels.pkl" and "tokens.pkl"
+        "data_basedir": ${DOMAIN_DATA_ENDPOINT}/ml-enn/deepbilevel_datafiles/textclassifier/wikidetox/,
+        
+        # Number of classes in the dataset.
+        "num_classes": 2,
+        
+        # Name of split set to use for determining fitness during evolution.
+        "test_dataset": "dev",
+        
+        # Whether to extract the domain data files in current directory or /tmp/
+        "unzip_curr_dir": false,
+        
+        # Maximum length of an input sentence.
+        "max_sentence_length": 100,
+        
+        # Batch size for training network
+        "batch_size": 5,
+        
+        # Number of epochs of training during evaluation
+        "num_epochs": 1,
+        
+        # Print more statements
+        "verbose": false,
+        
+        # Whether to reduce number of training examples
+        "subsample": fasle,
+        
+        # Number of training examples to reduce to
+        "subsample_amount": 5,
+        
+        # Whether to reduce number of test examples
+        "test_subsample": fasle,
+        
+        # Number of test examples to reduce to
+        "test_subsample_amount": 5,
+        
+        # Specifies the domain's evaluator class name.
+        # File will be found by snake-case of this value.
+        "evaluator_class_name": "TextClassifierEvaluator"
+    },
+        
+    "builder_config": {
+        "verbose": false,
+        "shared_layers": false,
+        "evolve_module_sharing": false,
+        "min_depth": 1,
+        "max_depth": 1,
+        "min_num_pools": 4,
+        "encoder": "null",
+        "module_scaling_policy": "no_module_scaling",
+        "global_filter_range": [64, 192],
+        "evaluation_hyperparameters_spec": {
+            "type" : {
+                "learning_rate" : {
+                    "type" : "Double",
+                    "lowerBound": 1e-4,
+                    "upperBound" : 1e-2,
+                    "scale": "log"
+                }
+            }
+        },
+        "layer_parameters_spec": {
+            "type" : {
+                "Conv1D" : {
+                    "type" : {
+                        "filters" : {
+                            "type" : "Integer",
+                            "lowerBound": 64,
+                            "upperBound" : 192,
+                            "scale": "log"
+                        },
+                        "kernel_size" : {
+                            "type" : "Integer",
+                            "choice" : [ 1, 3, 5, 7 ]
+                        },
+                        "activation" : {
+                            "type" : "String",
+                            "choice": [ "relu", "linear", "elu", "selu" ]
+                        },
+                        "kernel_initializer" : {
+                            "type" : "String",
+                            "choice": [ "glorot_normal", "he_normal",
+                                        "glorot_uniform", "he_uniform" ]
+                        },
+                        "kernel_regularizer" : {
+                            "type" : {
+                                "regularizer" : {
+                                    "type" : "String",
+                                    "choice": [ "l1", "l2" ]
+                                },
+                                "l" : {
+                                    "type" : "Double",
+                                    "lowerBound": 1e-9,
+                                    "upperBound" : 1e-3,
+                                    "scale": "log"
+                                }
+                            }
+                        },
+                        "padding" : {
+                            "type" : "String",
+                            "choice": [ "same" ]
+                        }
+                    }
+                },
+                "LSTM": {
+                    "type" : {
+                        "units" : {
+                            "type" : "Integer",
+                            "lowerBound" : 64,
+                            "upperBound" : 192,
+                            "scale" : "log"
+                        },
+                        "dropout" : {
+                            "type" : "Double",
+                            "lowerBound" : 0.0,
+                            "upperBound" : 0.5,
+                            "scale" : "linear"
+                        },
+                        "recurrent_dropout" : {
+                            "type" : "Double",
+                            "lowerBound" : 0.0,
+                            "upperBound" : 0.5,
+                            "scale" : "linear"
+                        },
+                        "go_backwards" : {
+                            "type" : "Boolean"
+                        }
+                    }
+                },
+                "GRU": {
+                    "type" : {
+                        "units" : {
+                            "type" : "Integer",
+                            "lowerBound" : 64,
+                            "upperBound" : 192,
+                            "scale" : "log"
+                        },
+                        "dropout" : {
+                            "type" : "Double",
+                            "lowerBound" : 0.0,
+                            "upperBound" : 0.5,
+                            "scale" : "linear"
+                        },
+                        "recurrent_dropout" : {
+                            "type" : "Double",
+                            "lowerBound" : 0.0,
+                            "upperBound" : 0.5,
+                            "scale" : "linear"
+                        },
+                        "go_backwards" : {
+                            "type" : "Boolean"
+                        }
+                    }
+                },
+                "SpatialDropout1D" : {
+                    "type" : {
+                        "rate" : {
+                            "type" : "Double",
+                            "lowerBound": 0.0,
+                            "upperBound" : 0.5,
+                            "scale": "linear"
+                        }
+                    }
+                }
+            }
+        },
+
+        # List describing which layer types are *not* allowed
+        # to come after another layer type, thus preventing illogical
+        # layer connections, making evolution more efficient.
+        #
+        # Each tuple [A, B] in the list is read as "B cannot come after A".
+        # The list below taken as a whole with the layer_parameter_spec above
+        # basically says: "Allow all combinations of layers"
+        "layer_mismatches": [ ]
+    },
+        
+    "blueprint_config": {
+        
+        # Blueprint population size
+        "pop_size": 2,
+        
+        # Number of assembled networks to construct per blueprint
+        "blueprint_num_eval": 1,
+        
+        # Number of blueprint species
+        "species_size": 1,
+        
+        # Probably of adding a new connection between layer during mutation
+        "prob_addconn": 0.12,
+        
+        # Probably of adding a new layer during mutation
+        "prob_addnode": 0.16,
+        
+        # Percentage of top blueprints that are preserved into the next generation
+        "elitism": 0.2,
+        
+        # Percentage of assembled networks that are preserved into the next generation
+        "carry_over": 0,
+        
+        # Number of generations of random exploration before optimization.
+        "preevolve_num_gen": 1,
+        
+        # Probability of adding a node in a preevolution mutation.
+        "preevolve_prob_addnode": 0.7,
+        
+        # Probability of adding a connection in a preevolution mutation.
+        "preevolve_prob_addconn": 0.25
+    },
+        
+        
+    "module_config": {
+        
+        # Population size for modules
+        "pop_size": 2,
+        
+        # Number of modules species
+        "species_size": 1,
+        
+        # Probably of adding a new connection between layer during mutation
+        "prob_addconn": 0.08,
+        
+        # Probably of adding a new layer during mutation
+        "prob_addnode": 0.08,
+        
+        # Percentage of top modules that are preserved into the next generation
+        "elitism": 0.4,
+        
+        # Distance threshold between different module species, used for
+        # determining speciation of modules
+        "compatibility_threshold": 1.0
+    }
+}
